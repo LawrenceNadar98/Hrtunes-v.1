@@ -15,11 +15,14 @@ export default function SiteHeader() {
     const location = useLocation();
 
     useEffect(() => {
-        if (!location.hash) return undefined;
-
         const frameId = window.requestAnimationFrame(() => {
-            const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-            target?.scrollIntoView({ behavior: "smooth", block: "start" });
+            if (location.hash) {
+                const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+                target?.scrollIntoView({ behavior: "smooth", block: "start" });
+                return;
+            }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
         });
 
         return () => window.cancelAnimationFrame(frameId);
@@ -29,7 +32,7 @@ export default function SiteHeader() {
         setOpen(false);
 
         const target = new URL(href, window.location.origin);
-        if (location.pathname === target.pathname && location.hash === target.hash) {
+        if (location.pathname === target.pathname && location.hash === target.hash && target.hash) {
             event.preventDefault();
             document.getElementById(decodeURIComponent(target.hash.slice(1)))?.scrollIntoView({
                 behavior: "smooth",
